@@ -17,7 +17,9 @@ and evaluates the model against analytic and linear-regression baselines.
 │   ├── dataset.py           # sampling, batch simulation, normalization
 │   ├── model.py             # PyTorch MLP
 │   ├── train.py             # training loop, early stopping, checkpointing
-│   └── evaluate.py          # metrics, baselines, plots
+│   ├── evaluate.py          # metrics, baselines, plots
+│   └── export_web.py        # writes the trained model into docs/ for the website
+├── docs/                    # static website (GitHub Pages): live simulator vs model
 ├── data/                    # generated dataset + normalization stats (runtime)
 ├── models/                  # saved model checkpoint (runtime)
 └── plots/                   # output figures (runtime)
@@ -26,7 +28,7 @@ and evaluates the model against analytic and linear-regression baselines.
 ## Requirements
 
 - Python 3.14+
-- NVIDIA GPU with CUDA 12.8 support (e.g. RTX 50-series), or CPU-only mode
+- NVIDIA GPU (the requirements install the CUDA 13.2 build of PyTorch), or CPU-only mode
 
 ## Installation
 
@@ -43,20 +45,14 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-`torch` from PyPI installs the CUDA build. For the exact GPU wheel (CUDA 12.8,
-required for RTX 50-series / Blackwell), use:
-
-```powershell
-pip install torch --index-url https://download.pytorch.org/whl/cu128
-```
-
-Verify the GPU is detected:
+On Windows, `torch` from PyPI is CPU-only, so `requirements.txt` adds the PyTorch
+`cu132` index to get the CUDA build. Verify the GPU is detected:
 
 ```powershell
 python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
 ```
 
-Expect `True NVIDIA GeForce RTX 5070 Laptop GPU`.
+Expect `True` followed by your GPU's name.
 
 ## Usage
 
@@ -79,4 +75,23 @@ Optional flags (see `python main.py --help`):
 --epochs   N      training epochs (default 100)
 --device   str    'cuda' or 'cpu' (default auto-detect)
 --seed     N      random seed (default 42)
+--regenerate      rebuild the dataset even if one is already saved
 ```
+
+## Website
+
+`docs/` is a static page that runs the simulator and the trained network side by
+side in the browser. After training, refresh the model it uses:
+
+```powershell
+python -m src.export_web
+```
+
+Preview it locally (the page must be served, not opened from disk):
+
+```powershell
+python -m http.server 8765 --directory docs
+```
+
+To publish, push to GitHub and set Settings → Pages → "Deploy from a branch" to
+`master` and `/docs`.

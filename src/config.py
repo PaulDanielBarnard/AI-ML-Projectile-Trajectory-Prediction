@@ -49,3 +49,9 @@ HIDDEN_DIMS = [128, 256, 128]
 EPOCHS = 100
 BATCH_SIZE = 512
 LR = 1e-3
+PATIENCE = 15       # early stopping: epochs without validation improvement
+
+# Relative importance of each output in the training loss (normalized units).
+LOSS_WEIGHTS = {"trajectory": 5.0, "impact": 4.0, "flight_time": 10.0}
+
+MODEL_PATH = MODELS_DIR / "model.pt"

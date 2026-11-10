@@ -1,0 +1,285 @@
+:root {
+  --paper: #eef3ec;
+  --surface: #fbfcfa;
+  --grid: #b9cdb8;
+  --grid-faint: #d6e2d4;
+  --ink: #14213d;
+  --ink-soft: #4a5673;
+  --pencil: #d7263d;
+  --teal: #1f6f8b;
+
+  --display: "Saira Condensed", "Arial Narrow", sans-serif;
+  --text: "Saira", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.masthead,
+main,
+footer {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.masthead { padding-top: 2.5rem; }
+
+h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.lede {
+  max-width: 44rem;
+  margin: 1rem 0 0;
+  font-size: 1.125rem;
+  color: var(--ink-soft);
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+/* ---- Bench: controls beside the plot -------------------------------- */
+.bench {
+  display: grid;
+  grid-template-columns: 17rem minmax(0, 1fr);
+  gap: 2rem;
+  margin-top: 2.25rem;
+  align-items: start;
+}
+
+.controls {
+  border-top: 3px solid var(--ink);
+  padding-top: 1rem;
+}
+
+.slider { margin-bottom: 0.9rem; }
+
+.slider-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.slider label { font-weight: 500; }
+
+.slider output {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* Range inputs drawn as a rule with a slide-rule cursor. */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.75rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--ink);
+}
+input[type="range"]::-moz-range-track {
+  height: 2px;
+  background: var(--ink);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.6rem;
+  height: 1.4rem;
+  margin-top: calc(-0.7rem + 1px);
+  border: 2px solid var(--ink);
+  border-radius: 2px;
+  background: var(--surface);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 0.6rem;
+  height: 1.4rem;
+  border: 2px solid var(--ink);
+  border-radius: 2px;
+  background: var(--surface);
+}
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { background: var(--pencil); border-color: var(--pencil); }
+input[type="range"]:focus-visible::-moz-range-thumb { background: var(--pencil); border-color: var(--pencil); }
+
+.buttons {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  background: var(--ink);
+  color: var(--surface);
+  cursor: pointer;
+}
+button.quiet {
+  background: transparent;
+  color: var(--ink);
+}
+button:hover { background: var(--teal); border-color: var(--teal); color: var(--surface); }
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--pencil);
+  outline-offset: 2px;
+}
+
+/* ---- Results --------------------------------------------------------- */
+.status {
+  margin: 0 0 0.75rem;
+  min-height: 1.6em;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+.status.error { color: var(--pencil); }
+
+.plot {
+  background: var(--surface);
+  border: 1px solid var(--grid);
+  height: clamp(18rem, 56vh, 32rem);
+}
+.plot svg { display: block; }
+
+.plot .minor { stroke: var(--grid-faint); stroke-width: 1; }
+.plot .major { stroke: var(--grid); stroke-width: 1; }
+.plot .axis { stroke: var(--ink); stroke-width: 1.5; }
+.tick,
+.axis-title {
+  font-family: var(--text);
+  font-size: 13px;
+  fill: var(--ink-soft);
+}
+.axis-title { fill: var(--ink); font-weight: 500; }
+.plot .sim-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.plot .net-dot { fill: var(--pencil); }
+.plot .sim-mark { stroke: var(--ink); stroke-width: 2.5; }
+.net-mark { fill: none; stroke: var(--pencil); stroke-width: 2; }
+.inset-frame { fill: var(--surface); stroke: var(--grid); }
+.inset-axis { stroke: var(--grid); }
+.inset-heading { stroke: var(--ink); stroke-width: 2; }
+
+.key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+.key li { display: flex; align-items: center; gap: 0.5rem; }
+.key-line { stroke: var(--ink); stroke-width: 2.5; }
+.key-dot { fill: var(--pencil); }
+
+.below {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+.below .readout { flex: 1; margin-top: 0; }
+.topview { margin: 0; flex: none; }
+.topview svg { display: block; }
+.topview figcaption { margin-top: 0.3rem; font-size: 0.875rem; color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .plot .sim-line.draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 0.9s ease-out forwards;
+  }
+  .plot .net-dot.draw {
+    opacity: 0;
+    animation: appear 0.3s ease-out 0.9s forwards;
+  }
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes appear { to { opacity: 1; } }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  text-align: right;
+  border-bottom: 1px solid var(--grid);
+}
+th:first-child, td:first-child { text-align: left; }
+thead th {
+  font-weight: 600;
+  border-bottom: 2px solid var(--ink);
+}
+tbody th { font-weight: 500; }
+
+.readout { margin-top: 1rem; }
+.readout thead th:nth-child(3),
+.readout tbody td:nth-child(3) { color: var(--pencil); }
+
+/* ---- Notes ----------------------------------------------------------- */
+.notes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 3rem;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 3px solid var(--ink);
+}
+.prose p { max-width: 38rem; margin: 0 0 0.9rem; }
+.caption { color: var(--ink-soft); font-size: 0.9375rem; margin: 0.75rem 0 0; }
+#metrics tbody tr:first-child { font-weight: 600; }
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.25rem;
+  padding-bottom: 2.5rem;
+}
+a { color: var(--teal); text-underline-offset: 0.2em; }
+
+@media (max-width: 56rem) {
+  .bench { grid-template-columns: minmax(0, 1fr); }
+  .results { order: -1; }
+  .notes { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+}
+@media (max-width: 30rem) {
+  .below { flex-direction: column; }
+  .below .readout { width: 100%; }
+  .masthead { padding-top: 1.5rem; }
+  th, td { padding-right: 0.4rem; font-size: 0.9375rem; }
+}

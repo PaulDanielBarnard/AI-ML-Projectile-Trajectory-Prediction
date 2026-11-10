@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projectile trajectory prediction</title>
+  <meta name="description" content="Compare a neural network's predicted projectile flight with a physics simulation, live in your browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600&family=Saira+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="masthead">
+    <h1>Projectile trajectory prediction</h1>
+    <p class="lede">A neural network learned how projectiles fly through air from
+      <span id="train-count">thousands of</span> simulated launches. Set up a launch
+      and compare its prediction with the physics simulation.</p>
+  </header>
+
+  <main>
+    <section class="bench" aria-label="Launch comparison">
+      <form class="controls" id="controls" aria-label="Launch settings">
+        <h2>Launch settings</h2>
+        <div id="sliders"></div>
+        <div class="buttons">
+          <button type="button" id="random">Random launch</button>
+          <button type="button" id="reset" class="quiet">Reset</button>
+        </div>
+      </form>
+
+      <div class="results">
+        <p class="status" id="status" role="status">Loading the model…</p>
+        <ul class="key" aria-label="Plot key">
+          <li><svg width="26" height="12" aria-hidden="true"><line class="key-line" x1="1" x2="25" y1="6" y2="6"/></svg>Simulator</li>
+          <li><svg width="26" height="12" aria-hidden="true"><circle class="key-dot" cx="4" cy="6" r="2.4"/><circle class="key-dot" cx="13" cy="6" r="2.4"/><circle class="key-dot" cx="22" cy="6" r="2.4"/></svg>Neural network, 100 predicted points</li>
+        </ul>
+        <div class="plot" id="plot" aria-label="Side view of the flight: altitude against distance downrange"></div>
+        <div class="below">
+          <table class="readout" id="readout" hidden>
+            <thead>
+              <tr><th scope="col"></th><th scope="col">Simulator</th><th scope="col">Neural network</th><th scope="col">Difference</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <figure class="topview">
+            <div id="topview"></div>
+            <figcaption>Seen from above</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="notes">
+      <div class="prose">
+        <h2>How the comparison works</h2>
+        <p><strong>The simulator</strong> steps the projectile forward 0.02 seconds at a
+          time, applying gravity and air drag that grows with the square of speed. It is
+          the reference answer.</p>
+        <p><strong>The neural network</strong> never sees those equations. It was trained
+          on simulated launches and predicts the whole flight in one step: 100 points
+          along the path, the impact point and the flight time. Each dot on the plot is
+          one of those 100 points, drawn exactly as predicted.</p>
+        <p>The sliders stop at the limits the network was trained on, so every launch
+          here is one it should handle. Both calculations run in your browser.</p>
+      </div>
+
+      <div class="accuracy">
+        <h2>Accuracy on <span id="test-count">unseen</span> launches</h2>
+        <table id="metrics">
+          <thead>
+            <tr><th scope="col">Method</th><th scope="col">Median impact error</th><th scope="col">Share of range</th><th scope="col">Flight time error</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p class="caption">Launches held back from training. Linear regression uses the
+          same inputs as the network; the no-drag formula is the textbook parabola.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a href="https://github.com/PaulDanielBarnard/AI-ML-Projectile-Trajectory-Prediction">Source code on GitHub</a>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
