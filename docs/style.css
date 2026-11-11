@@ -193,6 +193,29 @@ a:focus-visible {
 .inset-axis { stroke: var(--grid); }
 .inset-heading { stroke: var(--ink); stroke-width: 2; }
 
+.plot:focus-visible { outline: 3px solid var(--pencil); outline-offset: 2px; }
+.plot.is-3d { cursor: grab; touch-action: pan-y; user-select: none; }
+.plot.is-3d:active { cursor: grabbing; }
+.plot .ground-edge { fill: none; stroke: var(--ink-soft); stroke-width: 1; }
+.plot .shadow { fill: none; stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.plot .drop { stroke: var(--ink-soft); stroke-width: 1; stroke-dasharray: 2 4; }
+
+.views {
+  display: inline-flex;
+  margin-bottom: 0.75rem;
+}
+.views button {
+  padding: 0.35rem 0.8rem;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+}
+.views button:first-child { border-radius: 3px 0 0 3px; }
+.views button:last-child { border-radius: 0 3px 3px 0; margin-left: -2px; }
+.views button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.views button:hover { background: var(--teal); border-color: var(--teal); color: var(--surface); }
+.views button:focus-visible { position: relative; z-index: 1; }
+
 .key {
   display: flex;
   flex-wrap: wrap;

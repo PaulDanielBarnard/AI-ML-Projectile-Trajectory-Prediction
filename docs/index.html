@@ -31,11 +31,15 @@
 
       <div class="results">
         <p class="status" id="status" role="status">Loading the model…</p>
+        <div class="views" role="group" aria-label="Plot view">
+          <button type="button" id="view-side" aria-pressed="true">Side view</button>
+          <button type="button" id="view-3d" aria-pressed="false">3D view</button>
+        </div>
         <ul class="key" aria-label="Plot key">
           <li><svg width="26" height="12" aria-hidden="true"><line class="key-line" x1="1" x2="25" y1="6" y2="6"/></svg>Simulator</li>
           <li><svg width="26" height="12" aria-hidden="true"><circle class="key-dot" cx="4" cy="6" r="2.4"/><circle class="key-dot" cx="13" cy="6" r="2.4"/><circle class="key-dot" cx="22" cy="6" r="2.4"/></svg>Neural network, 100 predicted points</li>
         </ul>
-        <div class="plot" id="plot" aria-label="Side view of the flight: altitude against distance downrange"></div>
+        <div class="plot" id="plot" tabindex="0" aria-label="Side view of the flight: altitude against distance downrange"></div>
         <div class="below">
           <table class="readout" id="readout" hidden>
             <thead>
@@ -62,7 +66,8 @@
           along the path, the impact point and the flight time. Each dot on the plot is
           one of those 100 points, drawn exactly as predicted.</p>
         <p>The sliders stop at the limits the network was trained on, so every launch
-          here is one it should handle. Both calculations run in your browser.</p>
+          here is one it should handle. Both calculations run in your browser.
+          Switch to the 3D view to see the heading as well, and drag to look from any angle.</p>
       </div>
 
       <div class="accuracy">

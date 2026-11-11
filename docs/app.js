@@ -1,4 +1,5 @@
-import { createModel, predict, simulate } from "./core.js";
+import { createModel, niceAxis, predict, simulate } from "./core.js";
+import { PITCH_RANGE, render3d } from "./view3d.js";
 
 const CONTROLS = [
   { key: "v0", label: "Launch speed", unit: "m/s", step: 1, digits: 0, start: 600 },
@@ -17,6 +18,8 @@ const statusEl = $("status");
 const inputs = {};
 let meta, model;
 let firstDraw = true;
+let view = "side";
+const camera = { yaw: -0.6, pitch: 0.5 };
 
 // ---- Formatting ---------------------------------------------------------
 const whole = new Intl.NumberFormat("en");
@@ -70,13 +73,61 @@ function readLaunch() {
 }
 
 // ---- Plot ---------------------------------------------------------------
-function niceAxis(maxValue) {
-  const rough = Math.max(maxValue, 1) / 5;
-  const power = 10 ** Math.floor(Math.log10(rough));
-  const step = [1, 2, 5, 10].map((m) => m * power).find((s) => s >= rough);
-  const max = Math.ceil(Math.max(maxValue, 1) / step) * step;
-  const km = max >= 2000;
-  return { step, max, unit: km ? "km" : "m", scale: km ? 1000 : 1 };
+/** Draw whichever view is selected, plus the small map seen from above. */
+function render() {
+  if (!latest) return;
+  if (view === "3d") {
+    const W = plotEl.clientWidth;
+    const H = plotEl.clientHeight;
+    if (W && H) plotEl.innerHTML = render3d(latest.sim, latest.net, camera, W, H);
+  } else {
+    drawPlot(latest.sim, latest.net);
+  }
+  drawTopView(latest.sim, latest.net);
+}
+
+function setView(next) {
+  view = next;
+  $("view-side").setAttribute("aria-pressed", String(view === "side"));
+  $("view-3d").setAttribute("aria-pressed", String(view === "3d"));
+  plotEl.classList.toggle("is-3d", view === "3d");
+  plotEl.setAttribute("aria-label", view === "3d"
+    ? "Flight in three dimensions. Arrow keys rotate the view."
+    : "Side view of the flight: altitude against distance downrange");
+  render();
+}
+
+function rotate(dYaw, dPitch) {
+  camera.yaw += dYaw;
+  camera.pitch = Math.min(PITCH_RANGE[1], Math.max(PITCH_RANGE[0], camera.pitch + dPitch));
+  render();
+}
+
+function bindViewControls() {
+  $("view-side").addEventListener("click", () => setView("side"));
+  $("view-3d").addEventListener("click", () => setView("3d"));
+
+  let last = null;
+  plotEl.addEventListener("pointerdown", (event) => {
+    if (view !== "3d") return;
+    last = [event.clientX, event.clientY];
+    plotEl.setPointerCapture(event.pointerId);
+  });
+  plotEl.addEventListener("pointermove", (event) => {
+    if (!last) return;
+    rotate((event.clientX - last[0]) * 0.008, (event.clientY - last[1]) * 0.006);
+    last = [event.clientX, event.clientY];
+  });
+  for (const type of ["pointerup", "pointercancel"]) {
+    plotEl.addEventListener(type, () => { last = null; });
+  }
+  plotEl.addEventListener("keydown", (event) => {
+    if (view !== "3d") return;
+    const turn = { ArrowLeft: [-0.1, 0], ArrowRight: [0.1, 0], ArrowUp: [0, 0.08], ArrowDown: [0, -0.08] }[event.key];
+    if (!turn) return;
+    event.preventDefault();
+    rotate(...turn);
+  });
 }
 
 function drawPlot(sim, net) {
@@ -139,7 +190,6 @@ function drawPlot(sim, net) {
   parts.push("</svg>");
   plotEl.innerHTML = parts.join("");
   firstDraw = false;
-  drawTopView(sim, net);
 }
 
 /** Small map seen from above: which way the launch heads and where it lands. */
@@ -202,7 +252,7 @@ let latest;
 function update() {
   const launch = readLaunch();
   latest = { sim: simulate(launch, meta), net: predict(model, launch) };
-  drawPlot(latest.sim, latest.net);
+  render();
   drawReadout(latest.sim, latest.net);
 }
 
@@ -242,10 +292,11 @@ async function start() {
     return;
   }
   buildControls();
+  bindViewControls();
   drawMetrics();
   selfCheck();
   update();
-  new ResizeObserver(() => latest && drawPlot(latest.sim, latest.net)).observe(plotEl);
+  new ResizeObserver(render).observe(plotEl);
 }
 
 start();

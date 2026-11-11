@@ -73,6 +73,19 @@ export function simulate(p, { g, dt, t_max: tMax }) {
   return { path, impact: [last[0], last[2]], flightTime: tMax, peak };
 }
 
+/**
+ * Round an axis up to tidy divisions (about five of them).
+ * Returns the division size, the axis maximum, and whether to label in m or km.
+ */
+export function niceAxis(maxValue) {
+  const rough = Math.max(maxValue, 1) / 5;
+  const power = 10 ** Math.floor(Math.log10(rough));
+  const step = [1, 2, 5, 10].map((m) => m * power).find((s) => s >= rough);
+  const max = Math.ceil(Math.max(maxValue, 1) / step) * step;
+  const km = max >= 2000;
+  return { step, max, unit: km ? "km" : "m", scale: km ? 1000 : 1 };
+}
+
 /** Build the network from model.json and the float32 weights in model.bin. */
 export function createModel(meta, buffer) {
   const weights = new Float32Array(buffer);
